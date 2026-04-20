@@ -6,14 +6,15 @@ body {
   margin: 0;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
-  color: #e2e8f0;
-  background: #090d14;
+  color: #e6edf6;
+  background: radial-gradient(circle at 15% 0%, #1a2746 0%, #0a101d 45%, #070b14 100%);
 }
 
 .page-header {
-  padding: 1.1rem 1.2rem;
-  border-bottom: 1px solid #1f2937;
-  background: #0b1220;
+  padding: 1.2rem 1.2rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(10, 16, 29, 0.78);
+  backdrop-filter: blur(12px);
 }
 
 .page-header h1 {
@@ -38,10 +39,12 @@ body {
 
 .papers-section,
 .viewer-section {
-  background: #0e1628;
-  border: 1px solid #1e293b;
-  border-radius: 0.9rem;
-  padding: 0.95rem;
+  background: rgba(15, 23, 42, 0.58);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.28);
+  backdrop-filter: blur(8px);
 }
 
 .papers-section {
@@ -63,9 +66,9 @@ body {
 
 .search-input {
   width: 100%;
-  border: 1px solid #334155;
-  border-radius: 0.6rem;
-  background: #0b1220;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.72rem;
+  background: rgba(9, 13, 24, 0.72);
   color: #e2e8f0;
   padding: 0.55rem 0.65rem;
 }
@@ -76,15 +79,15 @@ body {
 }
 
 .paper-card {
-  border: 1px solid #334155;
-  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 0.88rem;
   padding: 0.8rem;
-  background: #111b31;
+  background: rgba(15, 23, 42, 0.62);
 }
 
 .paper-card.is-active {
-  border-color: #3b82f6;
-  background: #0f213f;
+  border-color: rgba(96, 165, 250, 0.95);
+  background: rgba(21, 40, 74, 0.88);
 }
 
 .paper-card h3 {
@@ -99,17 +102,17 @@ body {
 }
 
 .read-button {
-  border: 1px solid #3b82f6;
-  border-radius: 0.5rem;
-  padding: 0.45rem 0.72rem;
+  border: 1px solid #4f8bff;
+  border-radius: 0.62rem;
+  padding: 0.44rem 0.75rem;
   cursor: pointer;
-  color: #dbeafe;
-  background: #1d4ed8;
+  color: #eef4ff;
+  background: linear-gradient(180deg, #3376ff 0%, #1d4ed8 100%);
   font-weight: 600;
 }
 
 .read-button:hover {
-  background: #1e40af;
+  background: linear-gradient(180deg, #2f6aec 0%, #1d43b5 100%);
 }
 
 .viewer-section {
@@ -143,9 +146,9 @@ body {
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.55rem;
-  border: 1px solid #334155;
-  border-radius: 0.75rem;
-  background: #0b1220;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 0.82rem;
+  background: rgba(9, 13, 24, 0.78);
 }
 
 .toolbar-group {
@@ -155,9 +158,9 @@ body {
 }
 
 .tool-button {
-  border: 1px solid #475569;
-  border-radius: 0.5rem;
-  background: #111827;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.62rem;
+  background: rgba(15, 23, 42, 0.9);
   color: #e2e8f0;
   min-width: 2rem;
   padding: 0.35rem 0.5rem;
@@ -175,9 +178,9 @@ body {
 
 .page-input {
   width: 4rem;
-  border: 1px solid #475569;
-  border-radius: 0.45rem;
-  background: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.55rem;
+  background: rgba(15, 23, 42, 0.85);
   color: #e2e8f0;
   padding: 0.35rem 0.45rem;
 }
@@ -194,18 +197,22 @@ body {
 
 .canvas-frame {
   margin-top: 0.85rem;
-  border: 1px solid #334155;
-  border-radius: 0.75rem;
-  background: #020617;
-  padding: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 0.9rem;
+  background: rgba(2, 6, 23, 0.88);
+  padding: 1rem;
   overflow: auto;
-  min-height: 62vh;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  min-height: 58vh;
+  max-height: calc(100vh - 215px);
 }
 
 .pdf-canvas {
   display: block;
   margin: 0 auto;
-  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.55);
+  border-radius: 0.15rem;
+  box-shadow: 0 14px 36px rgba(2, 6, 23, 0.58);
   background: #fff;
 }
 
@@ -234,5 +241,24 @@ body {
     max-height: calc(100vh - 108px);
     position: sticky;
     top: 0.9rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .layout {
+    padding: 0.7rem;
+  }
+
+  .reader-toolbar {
+    gap: 0.35rem 0.6rem;
+  }
+
+  .toolbar-group {
+    width: 100%;
+  }
+
+  .canvas-frame {
+    max-height: calc(100vh - 300px);
+    padding: 0.7rem;
   }
 }

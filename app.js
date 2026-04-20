@@ -8,6 +8,7 @@ const papers = Array.isArray(window.papers) ? window.papers : [];
 const papersList = document.getElementById("papers-list");
 const paperSearch = document.getElementById("paper-search");
 const viewerPlaceholder = document.getElementById("viewer-placeholder");
+const viewerSection = document.querySelector(".viewer-section");
 const canvasFrame = document.getElementById("canvas-frame");
 const canvas = document.getElementById("pdf-canvas");
 const currentPaperTitle = document.getElementById("current-paper-title");
@@ -26,14 +27,14 @@ const state = {
   pdfDocument: null,
   currentPage: 1,
   totalPages: 0,
-  scale: 1.2,
+  scale: 1,
   token: 0,
 };
 
-const MIN_SCALE = 0.7;
-const MAX_SCALE = 2.6;
-const SCALE_STEP = 0.2;
-const DEFAULT_SCALE = 1.2;
+const MIN_SCALE = 0.6;
+const MAX_SCALE = 3;
+const SCALE_STEP = 0.15;
+const DEFAULT_SCALE = 1;
 
 function setStatus(message) {
   viewerPlaceholder.textContent = message;
@@ -44,6 +45,28 @@ function setStatus(message) {
 function showCanvas() {
   viewerPlaceholder.classList.add("hidden");
   canvasFrame.classList.remove("hidden");
+}
+
+function handleReaderWheel(event) {
+  if (!state.pdfDocument) {
+    return;
+  }
+
+  const frame = canvasFrame;
+  const canScroll = frame.scrollHeight > frame.clientHeight;
+  if (!canScroll) {
+    return;
+  }
+
+  const atTop = frame.scrollTop <= 0;
+  const atBottom = frame.scrollTop + frame.clientHeight >= frame.scrollHeight - 1;
+  const scrollingDown = event.deltaY > 0;
+  const scrollingUp = event.deltaY < 0;
+
+  if ((scrollingDown && !atBottom) || (scrollingUp && !atTop)) {
+    event.preventDefault();
+    frame.scrollTop += event.deltaY;
+  }
 }
 
 function updateControls() {
@@ -80,7 +103,14 @@ async function renderCurrentPage(token) {
     return;
   }
 
-  const viewport = page.getViewport({ scale: state.scale });
+  const baseViewport = page.getViewport({ scale: 1 });
+  const frameWidth =
+    canvasFrame.clientWidth ||
+    (viewerSection ? viewerSection.clientWidth - 36 : window.innerWidth - 40);
+  const targetWidth = Math.max(frameWidth - 28, 280);
+  const fitScale = targetWidth / baseViewport.width;
+  const renderScale = fitScale * state.scale;
+  const viewport = page.getViewport({ scale: renderScale });
   const context = canvas.getContext("2d");
   const pixelRatio = window.devicePixelRatio || 1;
 
@@ -221,6 +251,21 @@ pageInput.addEventListener("change", () => {
 zoomOutButton.addEventListener("click", () => setScale(state.scale - SCALE_STEP));
 zoomInButton.addEventListener("click", () => setScale(state.scale + SCALE_STEP));
 zoomResetButton.addEventListener("click", () => setScale(DEFAULT_SCALE));
+canvasFrame.addEventListener("wheel", handleReaderWheel, { passive: false });
+
+let resizeTimer;
+window.addEventListener("resize", () => {
+  if (!state.pdfDocument) {
+    return;
+  }
+
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    renderCurrentPage(state.token).catch(() => {
+      setStatus("Could not resize PDF view.");
+    });
+  }, 120);
+});
 
 setStatus("Select a paper to start reading.");
 updateControls();
