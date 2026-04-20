@@ -27,14 +27,17 @@ const state = {
   pdfDocument: null,
   currentPage: 1,
   totalPages: 0,
-  scale: 1,
+  scale: 1.08,
   token: 0,
 };
 
 const MIN_SCALE = 0.6;
 const MAX_SCALE = 3;
 const SCALE_STEP = 0.15;
-const DEFAULT_SCALE = 1;
+const DEFAULT_SCALE = 1.08;
+const WHEEL_SWITCH_COOLDOWN = 280;
+
+let wheelNavigationLockUntil = 0;
 
 function setStatus(message) {
   viewerPlaceholder.textContent = message;
@@ -47,25 +50,50 @@ function showCanvas() {
   canvasFrame.classList.remove("hidden");
 }
 
+function canSwitchPageFromWheel() {
+  const now = Date.now();
+  if (now < wheelNavigationLockUntil) {
+    return false;
+  }
+
+  wheelNavigationLockUntil = now + WHEEL_SWITCH_COOLDOWN;
+  return true;
+}
+
 function handleReaderWheel(event) {
   if (!state.pdfDocument) {
     return;
   }
 
   const frame = canvasFrame;
-  const canScroll = frame.scrollHeight > frame.clientHeight;
-  if (!canScroll) {
+  const deltaY = event.deltaY;
+  if (Math.abs(deltaY) < 2) {
     return;
   }
 
-  const atTop = frame.scrollTop <= 0;
-  const atBottom = frame.scrollTop + frame.clientHeight >= frame.scrollHeight - 1;
-  const scrollingDown = event.deltaY > 0;
-  const scrollingUp = event.deltaY < 0;
+  const canScroll = frame.scrollHeight > frame.clientHeight;
+  const edgeThreshold = 2;
 
-  if ((scrollingDown && !atBottom) || (scrollingUp && !atTop)) {
+  const atTop = frame.scrollTop <= edgeThreshold;
+  const atBottom = frame.scrollTop + frame.clientHeight >= frame.scrollHeight - edgeThreshold;
+  const scrollingDown = deltaY > 0;
+  const scrollingUp = deltaY < 0;
+
+  if (canScroll && ((scrollingDown && !atBottom) || (scrollingUp && !atTop))) {
     event.preventDefault();
-    frame.scrollTop += event.deltaY;
+    frame.scrollTop += deltaY;
+    return;
+  }
+
+  if (scrollingDown && state.currentPage < state.totalPages && canSwitchPageFromWheel()) {
+    event.preventDefault();
+    goToPage(state.currentPage + 1, { anchor: "top" });
+    return;
+  }
+
+  if (scrollingUp && state.currentPage > 1 && canSwitchPageFromWheel()) {
+    event.preventDefault();
+    goToPage(state.currentPage - 1, { anchor: "bottom" });
   }
 }
 
@@ -93,11 +121,12 @@ async function destroyCurrentDocument() {
   await oldDoc.destroy();
 }
 
-async function renderCurrentPage(token) {
+async function renderCurrentPage(token, options = {}) {
   if (!state.pdfDocument) {
     return;
   }
 
+  const { anchor = "top" } = options;
   const page = await state.pdfDocument.getPage(state.currentPage);
   if (token !== state.token) {
     return;
@@ -119,14 +148,22 @@ async function renderCurrentPage(token) {
   canvas.style.width = `${Math.floor(viewport.width)}px`;
   canvas.style.height = `${Math.floor(viewport.height)}px`;
 
+  canvas.classList.add("is-rendering");
   context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
   await page.render({ canvasContext: context, viewport }).promise;
   if (token !== state.token) {
     return;
   }
 
+  canvas.classList.remove("is-rendering");
   showCanvas();
   updateControls();
+
+  if (anchor === "top") {
+    canvasFrame.scrollTop = 0;
+  } else if (anchor === "bottom") {
+    canvasFrame.scrollTop = canvasFrame.scrollHeight;
+  }
 }
 
 async function openPaper(paper) {
@@ -153,7 +190,7 @@ async function openPaper(paper) {
   state.pdfDocument = documentRef;
   state.totalPages = documentRef.numPages;
   updateControls();
-  await renderCurrentPage(openToken);
+  await renderCurrentPage(openToken, { anchor: "top" });
 }
 
 function createPaperCard(paper) {
@@ -211,15 +248,19 @@ function renderPapers(list) {
   list.forEach((paper) => papersList.appendChild(createPaperCard(paper)));
 }
 
-function goToPage(pageNumber) {
+function goToPage(pageNumber, options = {}) {
   if (!state.pdfDocument) {
     return;
   }
 
   const nextPage = Math.min(Math.max(pageNumber, 1), state.totalPages);
+  if (nextPage === state.currentPage) {
+    return;
+  }
+
   state.currentPage = nextPage;
   updateControls();
-  renderCurrentPage(state.token).catch(() => {
+  renderCurrentPage(state.token, options).catch(() => {
     setStatus("Could not render this page.");
   });
 }
@@ -232,7 +273,7 @@ function setScale(nextScale) {
   const clampedScale = Math.min(Math.max(nextScale, MIN_SCALE), MAX_SCALE);
   state.scale = clampedScale;
   updateControls();
-  renderCurrentPage(state.token).catch(() => {
+  renderCurrentPage(state.token, { anchor: "top" }).catch(() => {
     setStatus("Could not apply zoom.");
   });
 }
@@ -261,7 +302,7 @@ window.addEventListener("resize", () => {
 
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    renderCurrentPage(state.token).catch(() => {
+    renderCurrentPage(state.token, { anchor: "top" }).catch(() => {
       setStatus("Could not resize PDF view.");
     });
   }, 120);
