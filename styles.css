@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  color: #1f2937;
+  background: #f8fafc;
+}
+
+.page-header {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  background: #0f172a;
+  color: #fff;
+}
+
+.page-header h1 {
+  margin: 0 0 0.25rem;
+}
+
+.page-header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  padding: 1rem;
+}
+
+.papers-section,
+.viewer-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.papers-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.paper-card {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.85rem;
+  background: #f8fafc;
+}
+
+.paper-card h3 {
+  margin: 0 0 0.35rem;
+}
+
+.paper-card p {
+  margin: 0 0 0.65rem;
+  color: #334155;
+}
+
+.read-button {
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+  color: #fff;
+  background: #2563eb;
+}
+
+.read-button:hover {
+  background: #1d4ed8;
+}
+
+.placeholder {
+  color: #64748b;
+}
+
+.pdf-viewer {
+  width: 100%;
+  min-height: 70vh;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (min-width: 980px) {
+  .layout {
+    grid-template-columns: 360px 1fr;
+    align-items: start;
+  }
+}

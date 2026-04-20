@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Library</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>PDF Library</h1>
+      <p>Browse papers and read them directly on this site.</p>
+    </header>
+
+    <main class="layout">
+      <section class="papers-section" aria-labelledby="papers-heading">
+        <h2 id="papers-heading">Available Papers</h2>
+        <div id="papers-list" class="papers-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="viewer-section" aria-labelledby="viewer-heading">
+        <h2 id="viewer-heading">Reader</h2>
+        <p id="viewer-placeholder" class="placeholder">
+          Select a paper to read it here.
+        </p>
+        <iframe
+          id="pdf-viewer"
+          class="pdf-viewer hidden"
+          title="PDF Reader"
+          loading="lazy"
+        ></iframe>
+      </section>
+    </main>
+
+    <script src="./papers-data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
