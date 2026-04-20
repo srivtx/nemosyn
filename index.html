@@ -3,36 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Library</title>
+    <title>NemoSyn Library</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="page-header">
-      <h1>PDF Library</h1>
-      <p>Browse papers and read them directly on this site.</p>
+      <div>
+        <h1>NemoSyn Library</h1>
+        <p>Minimal, readable PDF reader for your paper collection.</p>
+      </div>
     </header>
 
     <main class="layout">
       <section class="papers-section" aria-labelledby="papers-heading">
-        <h2 id="papers-heading">Available Papers</h2>
+        <h2 id="papers-heading">Papers</h2>
+        <label class="search-label" for="paper-search">Find paper</label>
+        <input
+          id="paper-search"
+          class="search-input"
+          type="search"
+          placeholder="Search by title or description..."
+        />
         <div id="papers-list" class="papers-grid" aria-live="polite"></div>
       </section>
 
       <section class="viewer-section" aria-labelledby="viewer-heading">
-        <h2 id="viewer-heading">Reader</h2>
-        <p id="viewer-placeholder" class="placeholder">
-          Select a paper to read it here.
-        </p>
-        <iframe
-          id="pdf-viewer"
-          class="pdf-viewer hidden"
-          title="PDF Reader"
-          loading="lazy"
-        ></iframe>
+        <div class="viewer-header">
+          <h2 id="viewer-heading">Reader</h2>
+          <p id="current-paper-title" class="current-paper-title">
+            Select a paper
+          </p>
+        </div>
+
+        <div class="reader-toolbar">
+          <div class="toolbar-group">
+            <button id="prev-page" type="button" class="tool-button">Prev</button>
+            <button id="next-page" type="button" class="tool-button">Next</button>
+            <label for="page-input" class="sr-only">Page</label>
+            <input id="page-input" class="page-input" type="number" min="1" value="1" />
+            <span id="page-count" class="meta-text">/ 0</span>
+          </div>
+          <div class="toolbar-group">
+            <button id="zoom-out" type="button" class="tool-button">-</button>
+            <span id="zoom-level" class="meta-text">100%</span>
+            <button id="zoom-in" type="button" class="tool-button">+</button>
+            <button id="zoom-reset" type="button" class="tool-button">Reset</button>
+          </div>
+        </div>
+
+        <p id="viewer-placeholder" class="placeholder">Select a paper to start reading.</p>
+
+        <div id="canvas-frame" class="canvas-frame hidden">
+          <canvas id="pdf-canvas" class="pdf-canvas" aria-label="PDF page canvas"></canvas>
+        </div>
       </section>
     </main>
 
     <script src="./papers-data.js"></script>
-    <script src="./app.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>

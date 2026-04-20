@@ -1,4 +1,4 @@
-const papers = [
+window.papers = [
   {
     id: "research-sql",
     title: "Research SQL",
