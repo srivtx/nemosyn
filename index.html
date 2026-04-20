@@ -26,40 +26,32 @@
         />
         <div id="papers-list" class="papers-grid" aria-live="polite"></div>
       </section>
+    </main>
 
-      <section class="viewer-section" aria-labelledby="viewer-heading">
-        <div class="viewer-header">
-          <h2 id="viewer-heading">Reader</h2>
-          <p id="current-paper-title" class="current-paper-title">
-            Select a paper
-          </p>
-        </div>
-
-        <div class="reader-toolbar">
-          <div class="toolbar-group">
-            <button id="prev-page" type="button" class="tool-button">Prev</button>
-            <button id="next-page" type="button" class="tool-button">Next</button>
-            <span class="meta-text">Page</span>
-            <label for="page-input" class="sr-only">Page</label>
-            <input id="page-input" class="page-input" type="number" min="1" value="1" />
-            <span id="page-count" class="meta-text">/ 0</span>
+    <div id="reader-modal" class="reader-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-paper-title">
+      <div class="reader-backdrop" data-close-modal></div>
+      <section class="reader-panel">
+        <header class="reader-panel-header">
+          <div>
+            <p class="reader-kicker">Reader</p>
+            <h2 id="modal-paper-title">Loading...</h2>
+            <p id="page-progress" class="meta-text"></p>
           </div>
           <div class="toolbar-group">
             <button id="zoom-out" type="button" class="tool-button">-</button>
             <span id="zoom-level" class="meta-text">100%</span>
             <button id="zoom-in" type="button" class="tool-button">+</button>
-            <button id="zoom-reset" type="button" class="tool-button">Reset</button>
+            <button id="zoom-reset" type="button" class="tool-button">Auto fit</button>
+            <button id="close-reader" type="button" class="tool-button close-button">Close</button>
           </div>
-          <span class="meta-text">Scroll inside reader to move pages</span>
-        </div>
+        </header>
 
-        <p id="viewer-placeholder" class="placeholder">Select a paper to start reading.</p>
-
-        <div id="canvas-frame" class="canvas-frame hidden">
-          <canvas id="pdf-canvas" class="pdf-canvas" aria-label="PDF page canvas"></canvas>
+        <div id="reader-scroll" class="reader-scroll" aria-live="polite">
+          <p id="reader-status" class="reader-status">Loading PDF...</p>
+          <div id="pdf-pages" class="pdf-pages hidden"></div>
         </div>
       </section>
-    </main>
+    </div>
 
     <script src="./papers-data.js"></script>
     <script type="module" src="./app.js"></script>
